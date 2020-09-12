@@ -1,3 +1,5 @@
+export { default as SiteVerificationMeta } from './components/SiteVerificationMeta';
+
 export { default as useAnalytics } from './hooks/useAnalytics';
 
 export { default as facebookPixel } from './services/FacebookPixel';

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import TagManager from 'react-gtm-module';
 import { Router } from 'next/router';
 
@@ -6,55 +6,83 @@ import { getAnalyticsSettings } from '../services/requests';
 import googleAnalytics from '../services/googleAnalytics';
 import yandexMetrika from '../services/yandexMetrika';
 import facebookPixel from '../services/facebookPixel';
+import { AnalyticsSettingsType } from '../typings/model';
 
-function useAnalytics() {
+type Options = {
+  timeout?: number;
+  keys?: Partial<AnalyticsSettingsType>;
+  useBackend?: boolean;
+};
+
+function useAnalytics(userOptions?: Options) {
+  const optionsRef = useRef<Options>({
+    useBackend: userOptions?.useBackend ?? true,
+    timeout: userOptions?.timeout ?? 2000,
+    keys: userOptions?.keys ?? {},
+  });
+
   useEffect(() => {
-    getAnalyticsSettings()
-      .then((response) => {
-        const settings = response.data;
+    const { current: options } = optionsRef;
 
-        if (settings.googleTagManagerId) {
-          TagManager.initialize({
-            gtmId: settings.googleTagManagerId,
-          });
-        }
+    const routeChangeListenerList: Array<() => void> = [];
 
-        const routeChangeListenerList: Array<() => void> = [];
+    function handleRouteChangeComplete() {
+      routeChangeListenerList.forEach((listener) => listener());
+    }
 
-        if (settings.googleAnalyticsId) {
-          googleAnalytics.init(settings.googleAnalyticsId);
-          googleAnalytics.trackPageView();
+    function initTrackers(): void {
+      const settingsPromise: Promise<Partial<
+        AnalyticsSettingsType
+      >> = options.useBackend
+        ? getAnalyticsSettings().then((response) => response.data)
+        : Promise.resolve({});
 
-          routeChangeListenerList.push(() => googleAnalytics.trackPageView());
-        }
+      settingsPromise
+        .then((settings) => {
+          const keys: Partial<AnalyticsSettingsType> = {
+            ...settings,
+            ...options.keys,
+          };
 
-        if (settings.yandexCounterId) {
-          yandexMetrika.init(settings.yandexCounterId);
-          yandexMetrika.trackPageView();
+          if (keys.googleTagManagerId) {
+            TagManager.initialize({
+              gtmId: keys.googleTagManagerId,
+            });
+          }
 
-          routeChangeListenerList.push(() => yandexMetrika.trackPageView());
-        }
+          if (keys.googleAnalyticsId) {
+            googleAnalytics.init(keys.googleAnalyticsId);
+            googleAnalytics.trackPageView();
 
-        if (settings.facebookPixelId) {
-          facebookPixel.init(settings.facebookPixelId);
-          facebookPixel.trackPageView();
+            routeChangeListenerList.push(() => googleAnalytics.trackPageView());
+          }
 
-          routeChangeListenerList.push(() => facebookPixel.trackPageView());
-        }
+          if (keys.yandexCounterId) {
+            yandexMetrika.init(keys.yandexCounterId);
+            yandexMetrika.trackPageView();
 
-        function handleRouteChangeComplete() {
-          routeChangeListenerList.forEach((listener) => listener());
-        }
+            routeChangeListenerList.push(() => yandexMetrika.trackPageView());
+          }
 
-        Router.events.on('routeChangeComplete', handleRouteChangeComplete);
+          if (keys.facebookPixelId) {
+            facebookPixel.init(keys.facebookPixelId);
+            facebookPixel.trackPageView();
 
-        return () => {
-          Router.events.off('routeChangeComplete', handleRouteChangeComplete);
-        };
-      })
-      .catch(() => {
-        console.error('Analytics initialization has been failed!');
-      });
+            routeChangeListenerList.push(() => facebookPixel.trackPageView());
+          }
+        })
+        .catch(() => {
+          console.error('Analytics initialization has been failed!');
+        });
+    }
+
+    setTimeout(initTrackers, options.timeout);
+
+    Router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      Router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
   }, []);
 }
 

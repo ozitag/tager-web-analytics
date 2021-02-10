@@ -8,6 +8,7 @@ import { getAnalyticsSettings } from '../services/requests';
 import googleAnalytics from '../services/googleAnalytics';
 import yandexMetrika from '../services/yandexMetrika';
 import facebookPixel from '../services/facebookPixel';
+import { gtagManager } from '../services/gtag';
 import { AnalyticsSettingsType } from '../typings/model';
 
 type Keys = Partial<AnalyticsSettingsType>;
@@ -16,6 +17,8 @@ function getEnvKeys(): Keys {
   return {
     googleTagManagerId: process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID,
     googleAnalyticsId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TRACKING_ID,
+    googleAnalytics4MeasurementId:
+      process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS4_MEASUREMENT_ID,
     yandexCounterId: process.env.NEXT_PUBLIC_YANDEX_METRIKA_COUNTER_ID,
     facebookPixelId: process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID,
   };
@@ -97,6 +100,15 @@ function useAnalytics(userOptions: Options = {}) {
             googleAnalytics.trackPageView();
 
             routeChangeListenerList.push(() => googleAnalytics.trackPageView());
+          }
+
+          /** Google Analytics 4 (via gtag.js)  */
+          const googleAnalytics4MeasurementId = resolveKey(
+            'googleAnalytics4MeasurementId'
+          );
+
+          if (googleAnalytics4MeasurementId) {
+            gtagManager.init(googleAnalytics4MeasurementId);
           }
 
           /** Yandex Metrika */

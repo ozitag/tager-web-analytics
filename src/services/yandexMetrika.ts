@@ -1,158 +1,196 @@
-import { appendScriptCodeToBody, canUseDOM, Nullable } from '@tager/web-core';
+import { canUseDOM } from '@tager/web-core';
+
+interface YmFunction {
+  (counterId: string, event: string, ...args: Array<unknown>): void;
+  a: Array<IArguments>;
+  l: number;
+}
+
+declare global {
+  interface Window {
+    ym?: YmFunction;
+  }
+}
+
+interface YandexMetrikaTrackerType {
+  init(options: {
+    accurateTrackBounce?: boolean;
+    childIframe?: boolean;
+    clickmap?: boolean;
+    defer?: boolean;
+    ecommerce?: boolean | string | Array<any>;
+    params?: object | Array<any>;
+    userParams?: object;
+    trackHash?: boolean;
+    trackLinks?: boolean;
+    trustedDomains?: Array<string>;
+    type?: number;
+    webvisor?: boolean;
+    triggerEvent?: boolean;
+  }): void;
+
+  addFileExtension(extensions: string | Array<string>): void;
+  extLink(
+    url: string,
+    options?: {
+      callback?: Function;
+      ctx?: object;
+      params?: { order_price?: number; currency: string };
+      title?: string;
+    }
+  ): void;
+  file(
+    url: string,
+    options?: {
+      callback?: Function;
+      ctx?: object;
+      params?: { order_price?: number; currency: string };
+      referer?: string;
+      title?: string;
+    }
+  ): void;
+  getClientID(callback: (clientId: string) => void): void;
+  hit(
+    url: string,
+    options?: {
+      callback?: Function;
+      ctx?: object;
+      params?: { order_price?: number; currency: string };
+      referer?: string;
+      title?: string;
+    }
+  ): void;
+  notBounce(options?: { callback?: Function; ctx?: object }): void;
+  params(parameters: object | Array<any>): void;
+  reachGoal(
+    target: string,
+    params?: object,
+    callback?: Function,
+    ctx?: object
+  ): void;
+  replacePhones(): void;
+  setUserID(userId: string): void;
+  userParams(parameters: Record<string, any>): void;
+}
+
+function getYmFunction(): YmFunction {
+  if (canUseDOM() && typeof window.ym === 'function') return window.ym;
+
+  const dataLayer: Array<IArguments> = [];
+
+  function ym() {
+    dataLayer.push(arguments);
+  }
+
+  ym.a = dataLayer;
+  ym.l = new Date().valueOf();
+
+  if (canUseDOM()) {
+    window.ym = ym;
+  }
+
+  return ym;
+}
 
 /**
  * Reference:
- * https://yandex.ru/support/metrica/code/counter-initialize.html
+ * {@link https://yandex.ru/support/metrica/code/counter-initialize.html}
  */
-const SCRIPT_CODE = `
-(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-`;
+function loadYandexMetrikaScript(): void {
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://mc.yandex.ru/metrika/tag.js';
+  document.body.appendChild(script);
+}
+
+function createYandexMetrikaTracker(
+  counterId: string
+): YandexMetrikaTrackerType {
+  const ym = getYmFunction();
+
+  return {
+    init(...args) {
+      ym(counterId, 'init', ...args);
+    },
+    addFileExtension(...args) {
+      ym(counterId, 'addFileExtension', ...args);
+    },
+    extLink(...args) {
+      ym(counterId, 'extLink', ...args);
+    },
+    file(...args) {
+      ym(counterId, 'file', ...args);
+    },
+    getClientID(...args) {
+      ym(counterId, 'getClientID', ...args);
+    },
+    hit(...args) {
+      ym(counterId, 'hit', ...args);
+    },
+    notBounce(...args) {
+      ym(counterId, 'notBounce', ...args);
+    },
+    params(...args) {
+      ym(counterId, 'params', ...args);
+    },
+    reachGoal(...args) {
+      ym(counterId, 'reachGoal', ...args);
+    },
+    replacePhones(...args) {
+      ym(counterId, 'replacePhones', ...args);
+    },
+    setUserID(...args) {
+      ym(counterId, 'setUserID', ...args);
+    },
+    userParams(...args) {
+      ym(counterId, 'userParams', ...args);
+    },
+  };
+}
 
 /**
  * Reference: Yandex.Metrika Javascript API
  * https://yandex.ru/support/metrica/objects/method-reference.html
  */
 class YandexMetrika {
-  counterId: string;
+  private counterId: string;
+  private isInitialized: boolean;
+  private tracker: YandexMetrikaTrackerType;
 
   constructor() {
     this.counterId = '';
+    this.isInitialized = false;
+    this.tracker = createYandexMetrikaTracker(this.counterId);
   }
 
-  getTracker(): Nullable<YandexMetrikaFunction> {
-    if (this.counterId && canUseDOM() && window.ym) {
-      return window.ym;
-    }
-
-    return null;
-  }
-
-  isTrackerEnabled(): boolean {
-    const ym = this.getTracker();
-
-    return Boolean(ym);
+  getTracker(): YandexMetrikaTrackerType {
+    return this.tracker;
   }
 
   init(counterId: string) {
+    if (this.isInitialized || !canUseDOM()) return;
+
     this.counterId = counterId;
+    this.tracker = createYandexMetrikaTracker(this.counterId);
 
-    appendScriptCodeToBody(SCRIPT_CODE);
+    loadYandexMetrikaScript();
 
-    const ym = this.getTracker();
-    if (!ym) return;
+    this.isInitialized = true;
 
-    ym(this.counterId, 'init', {
+    this.tracker.init({
       clickmap: true,
       trackLinks: true,
       accurateTrackBounce: true,
       webvisor: true,
+      defer: true,
     });
   }
 
   trackPageView() {
-    const ym = this.getTracker();
-    if (!ym) return;
-
-    ym(this.counterId, 'hit', window.location.pathname);
-  }
-}
-
-interface YandexMetrikaFunction {
-  (
-    counterId: string,
-    event: 'init',
-    options?: {
-      accurateTrackBounce?: boolean;
-      childIframe?: boolean;
-      clickmap?: boolean;
-      ecommerce?: boolean | string | Array<any>;
-      params?: object | Array<any>;
-      userParams?: object;
-      trackHash?: boolean;
-      trackLinks?: boolean;
-      trustedDomains?: Array<string>;
-      type?: number;
-      ut?: string;
-      webvisor?: boolean;
-      triggerEvent?: boolean;
-    }
-  ): void;
-  (
-    counterId: string,
-    event: 'addFileExtension',
-    extensions: string | Array<string>
-  ): void;
-  (
-    counterId: string,
-    event: 'extLink',
-    url: string,
-    options?: {
-      callback?: Function;
-      ctx?: object;
-      params?: { order_price?: number; currency: string };
-      title?: string;
-    }
-  ): void;
-  (
-    counterId: string,
-    event: 'file',
-    url: string,
-    options?: {
-      callback?: Function;
-      ctx?: object;
-      params?: { order_price?: number; currency: string };
-      referer?: string;
-      title?: string;
-    }
-  ): void;
-  (
-    counterId: string,
-    event: 'getClientID',
-    callback: (clientId: string) => void
-  ): void;
-  (
-    counterId: string,
-    event: 'hit',
-    url: string,
-    options?: {
-      callback?: Function;
-      ctx?: object;
-      params?: { order_price?: number; currency: string };
-      referer?: string;
-      title?: string;
-    }
-  ): void;
-  (
-    counterId: string,
-    event: 'notBounce',
-    options?: {
-      callback?: Function;
-      ctx?: object;
-    }
-  ): void;
-  (counterId: string, event: 'params', parameters: object | Array<any>): void;
-  (
-    counterId: string,
-    event: 'reachGoal',
-    target: string,
-    params?: object,
-    callback?: Function,
-    ctx?: object
-  ): void;
-  (counterId: string, event: 'replacePhones'): void;
-  (counterId: string, event: 'setUserID', userId: string): void;
-  (
-    counterId: string,
-    event: 'userParams',
-    parameters: Record<string, any>
-  ): void;
-}
-
-declare global {
-  interface Window {
-    ym?: YandexMetrikaFunction;
+    this.tracker.hit(window.location.href, {
+      referer: document.referrer,
+      title: document.title,
+    });
   }
 }
 

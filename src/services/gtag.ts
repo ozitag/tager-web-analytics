@@ -7,6 +7,8 @@ declare global {
 }
 
 function execCommand(..._args: Array<unknown>) {
+  if (!canUseDOM()) return;
+
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(arguments);
 }

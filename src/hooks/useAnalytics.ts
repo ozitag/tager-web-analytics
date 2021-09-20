@@ -6,6 +6,7 @@ import { Nullable } from '@tager/web-core';
 
 import { getAnalyticsSettings } from '../services/requests';
 import googleAnalytics from '../services/googleAnalytics';
+import googleOptimize from '../services/googleOptimize';
 import yandexMetrika from '../services/yandexMetrika';
 import facebookPixel from '../services/facebookPixel';
 import { gtagManager } from '../services/gtag';
@@ -20,6 +21,7 @@ function getEnvKeys(): Keys {
     googleAnalytics4MeasurementId:
       process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS4_MEASUREMENT_ID,
     yandexCounterId: process.env.NEXT_PUBLIC_YANDEX_METRIKA_COUNTER_ID,
+    googleOptimizeId: process.env.NEXT_PUBLIC_GOOGLE_OPTIMIZE_ID,
     facebookPixelId: process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID,
   };
 }
@@ -130,6 +132,13 @@ function useAnalytics(userOptions: Options = {}) {
 
             routeChangeListenerList.push(() => facebookPixel.trackPageView());
           }
+
+            /** Google Optimize */
+            const googleOptimizeId = resolveKey('googleOptimizeId');
+
+            if (googleOptimizeId) {
+                googleOptimize.init(googleOptimizeId);
+            }
         })
         .catch(() => {
           console.error('Analytics initialization has been failed!');

@@ -5,6 +5,7 @@ export { default as useAnalytics } from './hooks/useAnalytics';
 export { default as facebookPixel } from './services/facebookPixel';
 export { default as googleAnalytics } from './services/googleAnalytics';
 export { default as yandexMetrika } from './services/yandexMetrika';
+export { default as googleOptimize } from './services/googleOptimize';
 export { gtagManager, gtag } from './services/gtag';
 export * from './services/requests';
 

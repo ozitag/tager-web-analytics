@@ -15,12 +15,10 @@
     "node": ">=12"
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm --entry ./src/main.ts",
-    "test": "tsdx test",
-    "lint": "eslint --fix ./src/**/*.{ts,tsx}",
-    "prebuild": "rimraf dist",
-    "prepare": "yarn build"
+    "emit-declarations": "tsc --project tsconfig.json --emitDeclarationOnly",
+    "build-js": "rollup -c rollup.config.js",
+    "build-package": "yarn build-js && yarn emit-declarations",
+    "prepare": "husky install"
   },
   "dependencies": {
     "react-ga": "^3.1.2",

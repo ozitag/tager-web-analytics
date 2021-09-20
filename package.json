@@ -15,10 +15,12 @@
     "node": ">=12"
   },
   "scripts": {
-    "emit-declarations": "tsc --project tsconfig.json --emitDeclarationOnly",
-    "build-js": "rollup -c rollup.config.js",
-    "build-package": "yarn build-js && yarn emit-declarations",
-    "prepare": "husky install"
+    "start": "tsdx watch",
+    "build": "cross-env NODE_ENV=production tsdx build --format=cjs,esm --entry ./src/main.ts",
+    "test": "tsdx test",
+    "lint": "eslint --fix ./src/**/*.{ts,tsx}",
+    "prebuild": "rimraf dist",
+    "prepare": "yarn build"
   },
   "dependencies": {
     "react-ga": "^3.1.2",
@@ -39,7 +41,7 @@
     "babel-eslint": "10.x",
     "cross-env": "^7.0.2",
     "eslint": "6.x",
-    "husky": "^7.0.2",
+    "husky": "^4.3.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "4.x",
     "eslint-plugin-import": "2.x",
@@ -47,12 +49,11 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "2.x",
-    "husky": "^4.3.0",
     "next": "^9.5.3",
     "react": "^16.13.1",
     "rimraf": "^3.0.2",
     "rollup-plugin-eslint": "^7.0.0",
-    "tsdx": "^0.13.3",
+    "tsdx": "^0.14.1",
     "tslib": "^2.0.1",
     "typescript": "3.9.7",
     "rollup": "^2.56.3",

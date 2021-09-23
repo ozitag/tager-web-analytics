@@ -11,7 +11,7 @@ import yandexMetrika from '../services/yandexMetrika';
 import facebookPixel from '../services/facebookPixel';
 import { gtagManager } from '../services/gtag';
 import { AnalyticsSettingsType } from '../typings/model';
-import {tiktokPixel} from "../main";
+import { tiktokPixel } from '../main';
 
 type Keys = Partial<AnalyticsSettingsType>;
 
@@ -73,11 +73,10 @@ function useAnalytics(userOptions: Options = {}) {
     }
 
     function initTrackers(): void {
-      const settingsPromise: Promise<Partial<
-        AnalyticsSettingsType
-      >> = useBackend
-        ? getAnalyticsSettings().then((response) => response.data)
-        : Promise.resolve({});
+      const settingsPromise: Promise<Partial<AnalyticsSettingsType>> =
+        useBackend
+          ? getAnalyticsSettings().then((response) => response.data)
+          : Promise.resolve({});
 
       settingsPromise
         .then((backendKeys) => {
@@ -125,32 +124,32 @@ function useAnalytics(userOptions: Options = {}) {
             routeChangeListenerList.push(() => yandexMetrika.trackPageView());
           }
 
-            /** Facebook Pixel */
-            const facebookPixelId = resolveKey('facebookPixelId');
+          /** Facebook Pixel */
+          const facebookPixelId = resolveKey('facebookPixelId');
 
-            if (facebookPixelId) {
-                facebookPixel.init(facebookPixelId);
-                facebookPixel.trackPageView();
+          if (facebookPixelId) {
+            facebookPixel.init(facebookPixelId);
+            facebookPixel.trackPageView();
 
-                routeChangeListenerList.push(() => facebookPixel.trackPageView());
-            }
+            routeChangeListenerList.push(() => facebookPixel.trackPageView());
+          }
 
-            /** Tiktok Pixel */
-            const tiktokPixelId = resolveKey('tiktokPixelId');
+          /** Tiktok Pixel */
+          const tiktokPixelId = resolveKey('tiktokPixelId');
 
-            if (tiktokPixelId) {
-                tiktokPixel.init(tiktokPixelId);
-                tiktokPixel.trackPageView();
+          if (tiktokPixelId) {
+            tiktokPixel.init(tiktokPixelId);
+            tiktokPixel.trackPageView();
 
-                routeChangeListenerList.push(() => tiktokPixel.trackPageView());
-            }
+            routeChangeListenerList.push(() => tiktokPixel.trackPageView());
+          }
 
-            /** Google Optimize */
-            const googleOptimizeId = resolveKey('googleOptimizeId');
+          /** Google Optimize */
+          const googleOptimizeId = resolveKey('googleOptimizeId');
 
-            if (googleOptimizeId) {
-                googleOptimize.init(googleOptimizeId);
-            }
+          if (googleOptimizeId) {
+            googleOptimize.init(googleOptimizeId);
+          }
         })
         .catch(() => {
           console.error('Analytics initialization has been failed!');

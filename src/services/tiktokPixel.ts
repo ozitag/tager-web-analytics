@@ -1,4 +1,4 @@
-import {appendScriptCodeToBody, canUseDOM, Nullable} from '@tager/web-core';
+import { appendScriptCodeToBody, canUseDOM, Nullable } from '@tager/web-core';
 
 const SCRIPT_CODE = `
     !function (w, d, t) {
@@ -14,51 +14,51 @@ const SCRIPT_CODE = `
 `;
 
 interface TiktokPixelInterface {
-    load(code: string): void;
+  load(code: string): void;
 
-    page(): void;
+  page(): void;
 
-    track(event: string): void;
+  track(event: string): void;
 }
 
 declare global {
-    interface Window {
-        ttq?: TiktokPixelInterface;
-    }
+  interface Window {
+    ttq?: TiktokPixelInterface;
+  }
 }
 
 class TiktokPixel {
-    pixelId: string;
+  pixelId: string;
 
-    constructor() {
-        this.pixelId = '';
+  constructor() {
+    this.pixelId = '';
+  }
+
+  getTracker(): Nullable<TiktokPixelInterface> {
+    if (this.pixelId && canUseDOM() && window.ttq) {
+      return window.ttq;
     }
 
-    getTracker(): Nullable<TiktokPixelInterface> {
-        if (this.pixelId && canUseDOM() && window.ttq) {
-            return window.ttq;
-        }
+    return null;
+  }
 
-        return null;
-    }
+  init(pixelId: string) {
+    this.pixelId = pixelId;
 
-    init(pixelId: string) {
-        this.pixelId = pixelId;
+    appendScriptCodeToBody(SCRIPT_CODE);
 
-        appendScriptCodeToBody(SCRIPT_CODE);
+    const tracker = this.getTracker();
+    if (!tracker) return;
 
-        const tracker = this.getTracker();
-        if (!tracker) return;
+    tracker.load(this.pixelId);
+  }
 
-        tracker.load(this.pixelId);
-    }
+  trackPageView() {
+    const tracker = this.getTracker();
+    if (!tracker) return;
 
-    trackPageView() {
-        const tracker = this.getTracker();
-        if (!tracker) return;
-
-        tracker.page();
-    }
+    tracker.page();
+  }
 }
 
 const tiktokPixel = new TiktokPixel();

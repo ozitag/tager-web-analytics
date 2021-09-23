@@ -25,6 +25,7 @@ declare namespace NodeJS {
     readonly NEXT_PUBLIC_GOOGLE_TAG_MANAGER_ID: string | undefined;
     readonly NEXT_PUBLIC_GOOGLE_OPTIMIZE_ID: string | undefined;
     readonly NEXT_PUBLIC_FACEBOOK_PIXEL_ID: string | undefined;
+    readonly NEXT_PUBLIC_TIKTOK_PIXEL_ID: string | undefined;
     readonly NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION_CODE: string | undefined;
     readonly NEXT_PUBLIC_YANDEX_SITE_VERIFICATION_CODE: string | undefined;
   }

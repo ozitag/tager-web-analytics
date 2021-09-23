@@ -11,6 +11,7 @@ import yandexMetrika from '../services/yandexMetrika';
 import facebookPixel from '../services/facebookPixel';
 import { gtagManager } from '../services/gtag';
 import { AnalyticsSettingsType } from '../typings/model';
+import {tiktokPixel} from "../main";
 
 type Keys = Partial<AnalyticsSettingsType>;
 
@@ -23,6 +24,7 @@ function getEnvKeys(): Keys {
     yandexCounterId: process.env.NEXT_PUBLIC_YANDEX_METRIKA_COUNTER_ID,
     googleOptimizeId: process.env.NEXT_PUBLIC_GOOGLE_OPTIMIZE_ID,
     facebookPixelId: process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID,
+    tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
   };
 }
 
@@ -123,15 +125,25 @@ function useAnalytics(userOptions: Options = {}) {
             routeChangeListenerList.push(() => yandexMetrika.trackPageView());
           }
 
-          /** Facebook Pixel */
-          const facebookPixelId = resolveKey('facebookPixelId');
+            /** Facebook Pixel */
+            const facebookPixelId = resolveKey('facebookPixelId');
 
-          if (facebookPixelId) {
-            facebookPixel.init(facebookPixelId);
-            facebookPixel.trackPageView();
+            if (facebookPixelId) {
+                facebookPixel.init(facebookPixelId);
+                facebookPixel.trackPageView();
 
-            routeChangeListenerList.push(() => facebookPixel.trackPageView());
-          }
+                routeChangeListenerList.push(() => facebookPixel.trackPageView());
+            }
+
+            /** Tiktok Pixel */
+            const tiktokPixelId = resolveKey('tiktokPixelId');
+
+            if (tiktokPixelId) {
+                tiktokPixel.init(tiktokPixelId);
+                tiktokPixel.trackPageView();
+
+                routeChangeListenerList.push(() => tiktokPixel.trackPageView());
+            }
 
             /** Google Optimize */
             const googleOptimizeId = resolveKey('googleOptimizeId');

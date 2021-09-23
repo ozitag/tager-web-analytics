@@ -7,6 +7,7 @@ export interface AnalyticsSettingsType {
   googleOptimizeId: Nullable<string>;
   yandexCounterId: Nullable<string>;
   facebookPixelId: Nullable<string>;
+  tiktokPixelId: Nullable<string>;
   yandexVerification: Nullable<string>;
   googleVerification: Nullable<string>;
 }

@@ -3,6 +3,7 @@ export { default as SiteVerificationMeta } from './components/SiteVerificationMe
 export { default as useAnalytics } from './hooks/useAnalytics';
 
 export { default as facebookPixel } from './services/facebookPixel';
+export { default as tiktokPixel } from './services/tiktokPixel';
 export { default as googleAnalytics } from './services/googleAnalytics';
 export { default as yandexMetrika } from './services/yandexMetrika';
 export { default as googleOptimize } from './services/googleOptimize';

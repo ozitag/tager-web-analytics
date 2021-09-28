@@ -2,6 +2,7 @@ import { canUseDOM } from '@tager/web-core';
 
 interface YmFunction {
   (counterId: string, event: string, ...args: Array<unknown>): void;
+
   a: Array<IArguments>;
   l: number;
 }
@@ -30,6 +31,7 @@ interface YandexMetrikaTrackerType {
   }): void;
 
   addFileExtension(extensions: string | Array<string>): void;
+
   extLink(
     url: string,
     options?: {
@@ -39,6 +41,7 @@ interface YandexMetrikaTrackerType {
       title?: string;
     }
   ): void;
+
   file(
     url: string,
     options?: {
@@ -49,7 +52,9 @@ interface YandexMetrikaTrackerType {
       title?: string;
     }
   ): void;
+
   getClientID(callback: (clientId: string) => void): void;
+
   hit(
     url: string,
     options?: {
@@ -60,16 +65,22 @@ interface YandexMetrikaTrackerType {
       title?: string;
     }
   ): void;
+
   notBounce(options?: { callback?: Function; ctx?: object }): void;
+
   params(parameters: object | Array<any>): void;
+
   reachGoal(
     target: string,
     params?: object,
     callback?: Function,
     ctx?: object
   ): void;
+
   replacePhones(): void;
+
   setUserID(userId: string): void;
+
   userParams(parameters: Record<string, any>): void;
 }
 

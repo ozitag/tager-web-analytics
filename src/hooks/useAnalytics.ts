@@ -9,9 +9,11 @@ import googleAnalytics from '../services/googleAnalytics';
 import googleOptimize from '../services/googleOptimize';
 import yandexMetrika from '../services/yandexMetrika';
 import facebookPixel from '../services/facebookPixel';
+import pinterest from '../services/pinterest';
+import tiktokPixel from '../services/tiktokPixel';
 import { gtagManager } from '../services/gtag';
+
 import { AnalyticsSettingsType } from '../typings/model';
-import { tiktokPixel } from '../main';
 
 type Keys = Partial<AnalyticsSettingsType>;
 
@@ -25,6 +27,7 @@ function getEnvKeys(): Keys {
     googleOptimizeId: process.env.NEXT_PUBLIC_GOOGLE_OPTIMIZE_ID,
     facebookPixelId: process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID,
     tiktokPixelId: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
+    pinterestId: process.env.NEXT_PUBLIC_PINTEREST_ID,
   };
 }
 
@@ -149,6 +152,13 @@ function useAnalytics(userOptions: Options = {}) {
 
           if (googleOptimizeId) {
             googleOptimize.init(googleOptimizeId);
+          }
+
+          /** Pinterest */
+          const pinterestId = resolveKey('pinterestId');
+
+          if (pinterestId) {
+            pinterest.init(pinterestId);
           }
         })
         .catch(() => {

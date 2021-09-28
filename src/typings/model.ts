@@ -8,6 +8,7 @@ export interface AnalyticsSettingsType {
   yandexCounterId: Nullable<string>;
   facebookPixelId: Nullable<string>;
   tiktokPixelId: Nullable<string>;
+  pinterestId: Nullable<string>;
   yandexVerification: Nullable<string>;
   googleVerification: Nullable<string>;
 }

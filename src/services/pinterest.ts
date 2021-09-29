@@ -3,10 +3,10 @@ import { appendScriptCodeToBody, canUseDOM, Nullable } from '@tager/web-core';
 const SCRIPT_CODE = `
     !function(e){if(!window.pintrk){window.pintrk = function () {
     window.pintrk.queue.push(Array.prototype.slice.call(arguments))};var
-    n=window.pintrk;n.queue=[],n.version=“3.0”;var
-    t=document.createElement(“script”);t.async=!0,t.src=e;var
-    r=document.getElementsByTagName(“script”)[0];
-    r.parentNode.insertBefore(t,r)}}(“https://s.pinimg.com/ct/core.js”);
+    n=window.pintrk;n.queue=[],n.version="3.0";var
+    t=document.createElement("script");t.async=!0,t.src=e;var
+    r=document.getElementsByTagName("script")[0];
+    r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
 `;
 
 type PinterestInstance = (

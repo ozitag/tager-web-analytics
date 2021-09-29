@@ -12,7 +12,6 @@ import facebookPixel from '../services/facebookPixel';
 import pinterest from '../services/pinterest';
 import tiktokPixel from '../services/tiktokPixel';
 import { gtagManager } from '../services/gtag';
-
 import { AnalyticsSettingsType } from '../typings/model';
 
 type Keys = Partial<AnalyticsSettingsType>;

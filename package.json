@@ -1,6 +1,6 @@
 {
   "name": "@tager/web-analytics",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "author": "Ivan Saranchonkau",
   "license": "MIT",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "src"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "scripts": {
     "start": "tsdx watch",

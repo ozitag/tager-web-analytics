@@ -1,16 +1,19 @@
 {
   "name": "@tager/web-analytics",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "author": "Ivan Saranchonkau",
   "license": "MIT",
-  "main": "dist/index.js",
-  "umd:main": "dist/web-core.umd.production.js",
-  "module": "dist/web-core.esm.js",
+  "main": "./dist/index.js",
+  "umd:main": "./dist/web-core.umd.production.js",
+  "module": "./dist/web-core.esm.js",
   "typings": "dist/main.d.ts",
   "files": [
     "dist",
     "src"
   ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "engines": {
     "node": ">=16"
   },

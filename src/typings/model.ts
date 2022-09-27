@@ -11,4 +11,5 @@ export interface AnalyticsSettingsType {
   pinterestId: Nullable<string>;
   yandexVerification: Nullable<string>;
   googleVerification: Nullable<string>;
+  headSnippet: Nullable<string>;
 }

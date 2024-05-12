@@ -43,7 +43,7 @@ export const gtag = {
     execCommand('event', eventName, eventParams);
   },
 
-  dataLayerPush( pushParams: { [key: string]: unknown } = {}){
+  dataLayerPush(pushParams: { [key: string]: unknown } = {}) {
     execCommand(pushParams);
   },
 
